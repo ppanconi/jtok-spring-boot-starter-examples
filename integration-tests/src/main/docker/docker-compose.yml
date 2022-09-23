@@ -1,0 +1,126 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+# It's contains kafka services containers
+version: '3.8'
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - app-tier
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '29092:29092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:29092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+    depends_on:
+      - zookeeper
+    networks:
+      - app-tier
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - '9999:9000'
+    environment:
+      - KAFKA_BROKERCONNECT=kafka:9092
+      - JVM_OPTS=-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify
+    depends_on:
+      - 'kafka'
+    networks:
+      - app-tier
+  postgres:
+    image: postgres
+    volumes:
+      - ./postgres-volume:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=depot,depot,${DEPOT_PASSWORD}:ecommerce,ecommerce,${ECOMMERCE_PASSWORD}:payments,payments,${PAYMENTS_PASSWORD}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 127.0.0.1:5432:5432
+    networks:
+      - app-tier
+  depot:
+    build:
+      context: ../../../../depot
+      dockerfile: ../integration-tests/src/main/docker/Dockerfile
+    image: depot_compose:2.6.6-SNAPSHOT
+    environment:
+      - SPRING_PROFILES_ACTIVE=integration
+      - MAIN_CLASS=it.plansoft.depot.DepotApplication
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
+      - ZOOKEEPER_QUORUM=zookeeper:2181
+      - POSTGRES_HOST=postgres
+#    ports:
+#      - 127.0.0.1:8081:8080
+    depends_on:
+      - postgres
+      - kafka
+    expose:
+      - "8080"
+    networks:
+      - app-tier
+  ecommerce:
+    build:
+      context: ../../../../ecommerce
+      dockerfile: ../integration-tests/src/main/docker/Dockerfile
+    image: ecommerce_compose:2.6.6-SNAPSHOT
+    environment:
+      - SPRING_PROFILES_ACTIVE=integration
+      - MAIN_CLASS=it.plansoft.ecommerce.EcommerceApplication
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
+      - ZOOKEEPER_QUORUM=zookeeper:2181
+      - POSTGRES_HOST=postgres
+#    ports:
+#      - 127.0.0.1:8082:8080
+    depends_on:
+      - postgres
+      - kafka
+    expose:
+      - "8080"
+    networks:
+      - app-tier
+  payments:
+    build:
+      context: ../../../../payments
+      dockerfile: ../integration-tests/src/main/docker/Dockerfile
+    image: payments_compose:2.6.6-SNAPSHOT
+    environment:
+      - SPRING_PROFILES_ACTIVE=integration
+      - MAIN_CLASS=it.plansoft.payments.PaymentsApplication
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
+      - ZOOKEEPER_QUORUM=zookeeper:2181
+      - POSTGRES_HOST=postgres
+#    ports:
+#      - 127.0.0.1:8083:8080
+    expose:
+      - "8080"
+    depends_on:
+      - postgres
+      - kafka
+    networks:
+      - app-tier
+  gateway:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - depot
+      - ecommerce
+      - payments
+    ports:
+      - "4000:4000"
+    networks:
+      - app-tier
+networks:
+  app-tier:
+    driver: bridge

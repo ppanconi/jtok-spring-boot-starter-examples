@@ -1,0 +1,14 @@
+###
+POST {{payments-prefix}}/api/accounts
+Content-Type: application/json
+
+{
+  "userId": "panks",
+  "notes": "Panks account"
+}
+
+###
+POST {{payments-prefix}}/api/accounts/panks/deposit
+Content-Type: application/json
+
+250.00

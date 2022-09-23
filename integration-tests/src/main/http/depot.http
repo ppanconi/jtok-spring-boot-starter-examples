@@ -1,0 +1,32 @@
+###
+POST {{depot-prefix}}/api/articles
+Content-Type: application/json
+
+{
+  "name": "scarpe-eleganti",
+  "description": "scarpe eleganti"
+}
+
+###
+POST {{depot-prefix}}/api/articles
+Content-Type: application/json
+
+{
+  "name": "calze-seta",
+  "description": "calze di seta"
+}
+
+###
+POST {{depot-prefix}}/api/operations/place
+Content-Type: application/json
+
+[
+  {
+    "article": "scarpe-eleganti",
+    "quantity": 50
+  },
+  {
+    "article": "calze-seta",
+    "quantity": 250
+  }
+]

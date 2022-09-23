@@ -1,0 +1,5 @@
+kafka:
+  replicaCount: 3
+  autoCreateTopicsEnable: false
+  global:
+    storageClass: do-block-storage

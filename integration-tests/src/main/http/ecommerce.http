@@ -1,0 +1,15 @@
+###
+POST {{ecommerce-prefix}}/api/order
+Content-Type: application/json
+
+{
+  "customer": "panks",
+  "granTotal": 123.56,
+  "itemValues": [
+    {"article": "scarpe-eleganti", "quantity": 1},
+    {"article": "calze-seta", "quantity": 2}
+  ]
+}
+
+###
+PATCH {{ecommerce-prefix}}/api/order/3/checkout
