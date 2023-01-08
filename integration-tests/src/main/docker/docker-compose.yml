@@ -49,6 +49,16 @@ services:
       - 127.0.0.1:5432:5432
     networks:
       - app-tier
+  mongo:
+    image: mongo:4.0.28
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    ports:
+      - 127.0.0.1:28018:27017
+    networks:
+      - app-tier
   depot:
     build:
       context: ../../../../depot
