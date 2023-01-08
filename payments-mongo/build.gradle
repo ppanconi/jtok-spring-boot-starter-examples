@@ -30,9 +30,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-//    implementation 'com.github.ppanconi:jtok-spring-boot-starter:multiple-persistence-SNAPSHOT'
-    implementation 'com.github.ppanconi:jtok-spring-boot-starter:2.6.6-multiple-persistence-SNAPSHOT'
-    implementation 'com.github.ppanconi:jtok-mongodb-spring-boot-starter:2.6.6-SNAPSHOT'
+    implementation 'com.github.ppanconi:jtok-spring-boot-starter:multiple-persistence-SNAPSHOT'
+//    implementation 'com.github.ppanconi:jtok-spring-boot-starter:2.6.6-multiple-persistence-SNAPSHOT'
+    implementation 'com.github.ppanconi:jtok-mongodb-spring-boot-starter:main-SNAPSHOT'
+//    implementation 'com.github.ppanconi:jtok-mongodb-spring-boot-starter:2.6.6-SNAPSHOT'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -101,15 +101,15 @@ services:
       - app-tier
   payments:
     build:
-      context: ../../../../payments
+      context: ../../../../payments-mongo
       dockerfile: ../integration-tests/src/main/docker/Dockerfile
-    image: payments_compose:2.6.6-SNAPSHOT
+    image: payments-mongo_compose:2.6.6-SNAPSHOT
     environment:
       - SPRING_PROFILES_ACTIVE=integration
-      - MAIN_CLASS=it.plansoft.payments.PaymentsApplication
+      - MAIN_CLASS=it.plansoft.payments.MongoPaymentsApplication
       - KAFKA_BOOTSTRAP_SERVER=kafka:9092
       - ZOOKEEPER_QUORUM=zookeeper:2181
-      - POSTGRES_HOST=postgres
+      - MONGODB_HOST=mongo
 #    ports:
 #      - 127.0.0.1:8083:8080
     expose:

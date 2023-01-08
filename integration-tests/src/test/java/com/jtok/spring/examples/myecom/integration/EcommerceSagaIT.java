@@ -42,7 +42,6 @@ public class EcommerceSagaIT {
                     new File("src/main/docker/docker-compose.yml"))
                     .withEnv("DOCKER_BUILDKIT", "1")
                     .withEnv("ECOMMERCE_PASSWORD", "ecommerce")
-                    .withEnv("PAYMENTS_PASSWORD", "payments")
                     .withEnv("DEPOT_PASSWORD", "depot")
                     .withEnv("POSTGRES_PASSWORD", "postgres")
                     .withLocalCompose(true)

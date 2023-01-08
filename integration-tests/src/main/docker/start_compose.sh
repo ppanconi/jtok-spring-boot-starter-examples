@@ -4,4 +4,4 @@ export ECOMMERCE_PASSWORD=ecommerce
 export PAYMENTS_PASSWORD=payments
 export DEPOT_PASSWORD=depot
 export POSTGRES_PASSWORD=postgres
-docker-compose up -d zookeeper kafka kafdrop postgres mongo
+docker-compose up -d
