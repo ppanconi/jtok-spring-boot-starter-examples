@@ -11,5 +11,11 @@ Content-Type: application/json
   ]
 }
 
+> {%
+
+    client.global.set("orderId", response.body.id);
+
+ %}
+
 ###
-PATCH {{ecommerce-prefix}}/api/order/3/checkout
+PATCH {{ecommerce-prefix}}/api/order/{{orderId}}/checkout
