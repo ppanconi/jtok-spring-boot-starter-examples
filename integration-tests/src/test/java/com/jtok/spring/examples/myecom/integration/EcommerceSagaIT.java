@@ -162,7 +162,7 @@ public class EcommerceSagaIT {
 
         //order creation on ecommerce service. The order is
         // in initial state  CREATED
-        long orderId = given().contentType(ContentType.JSON)
+        String orderId = given().contentType(ContentType.JSON)
                 .body("{\n" +
                         "  \"customer\": \"panks\",\n" +
                         "  \"granTotal\": " + granTotal + ",\n" +
@@ -175,9 +175,9 @@ public class EcommerceSagaIT {
                 .then().statusCode(HttpStatus.SC_CREATED)
                 .body("status", equalTo("CREATED"))
                 .body("granTotal", equalTo(new BigDecimal(granTotal).floatValue()))
-                .body("items.find {it.catalogArticle.name == 'scarpe-eleganti'}.quantity", equalTo(1))
-                .body("items.find {it.catalogArticle.name == 'calze-seta'}.quantity", equalTo(2))
-                .extract().body().jsonPath().getLong("id");
+                .body("items.find {it.catalogArticleName == 'scarpe-eleganti'}.quantity", equalTo(1))
+                .body("items.find {it.catalogArticleName == 'calze-seta'}.quantity", equalTo(2))
+                .extract().body().jsonPath().get("id");
 
         //if articles stocks are present the order can pass in  APPROVED state and
         //the quantity is updated on the depot service and on the ecommerce catalog service

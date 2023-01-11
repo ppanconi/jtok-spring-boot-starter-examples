@@ -81,19 +81,19 @@ services:
       - app-tier
   ecommerce:
     build:
-      context: ../../../../ecommerce
+      context: ../../../../ecommerce-mongo
       dockerfile: ../integration-tests/src/main/docker/Dockerfile
-    image: ecommerce_compose:2.6.6-SNAPSHOT
+    image: ecommerce-mongo_compose:2.6.6-SNAPSHOT
     environment:
       - SPRING_PROFILES_ACTIVE=integration
-      - MAIN_CLASS=it.plansoft.ecommerce.EcommerceApplication
+      - MAIN_CLASS=it.plansoft.ecommerce.MongoEcommerceApplication
       - KAFKA_BOOTSTRAP_SERVER=kafka:9092
       - ZOOKEEPER_QUORUM=zookeeper:2181
-      - POSTGRES_HOST=postgres
+      - MONGODB_HOST=mongo
 #    ports:
 #      - 127.0.0.1:8082:8080
     depends_on:
-      - postgres
+      - mongo
       - kafka
     expose:
       - "8080"
@@ -115,7 +115,7 @@ services:
     expose:
       - "8080"
     depends_on:
-      - postgres
+      - mongo
       - kafka
     networks:
       - app-tier
