@@ -63,7 +63,7 @@ services:
     build:
       context: ../../../../depot
       dockerfile: ../integration-tests/src/main/docker/Dockerfile
-    image: depot_compose:2.6.6-SNAPSHOT
+    image: depot-jpa_compose:2.6.6-SNAPSHOT
     environment:
       - SPRING_PROFILES_ACTIVE=integration
       - MAIN_CLASS=it.plansoft.depot.DepotApplication
