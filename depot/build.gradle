@@ -33,7 +33,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'com.github.ppanconi:jtok-spring-boot-starter:multiple-persistence-SNAPSHOT'
+	implementation 'com.github.ppanconi:jtok-spring-boot-starter:master-SNAPSHOT'
 	implementation 'com.github.ppanconi:jtok-jpa-spring-boot-starter:main-SNAPSHOT'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
