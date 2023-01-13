@@ -3,6 +3,7 @@ package it.plansoft.ecommerce.order;
 import com.jtok.spring.subscriber.ExternalDomainEvent;
 import it.plansoft.ecommerce.catalogarticle.CatalogArticle;
 import it.plansoft.ecommerce.catalogarticle.CatalogArticleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class OrderService {
 
     final Logger logger = LoggerFactory.getLogger(OrderService.class);
@@ -34,7 +36,11 @@ public class OrderService {
 
     @PostConstruct
     private void initCollections() {
-        mongoTemplate.createCollection(Order.class);
+        try {
+            mongoTemplate.createCollection(Order.class);
+        } catch (Exception ex) {
+            log.warn("error creating collections: {}", ex.getMessage());
+        }
     }
 
     private List<OrderItem> mapItems(Order order, List<OrderItemValue> values) {

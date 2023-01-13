@@ -3,10 +3,12 @@ package it.plansoft.ecommerce.catalogarticle;
 import com.jtok.spring.subscriber.ExternalDomainEvent;
 import it.plansoft.ecommerce.catalogupdate.CatalogUpdate;
 import it.plansoft.ecommerce.catalogupdate.CatalogUpdateRepository;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class CatalogArticleService {
 
     static final Logger logger = LoggerFactory.getLogger(CatalogArticleService.class);
@@ -33,8 +36,14 @@ public class CatalogArticleService {
 
     @PostConstruct
     private void initCollections() {
-        mongoTemplate.createCollection(CatalogArticle.class);
-        mongoTemplate.createCollection(CatalogUpdate.class);
+
+        try {
+            mongoTemplate.createCollection(CatalogArticle.class);
+            mongoTemplate.createCollection(CatalogUpdate.class);
+        } catch (Exception ex) {
+            log.warn("error creating collections: {}", ex.getMessage());
+        }
+
     }
 
     @Transactional
