@@ -6,8 +6,8 @@ bounded-contexts/micorservices: depot, ecommerce, payments.
 The repository contains:
 
 - **depot**: a gradle spring-jtok project modelling stock depot bounded context
-- **ecommerce**: a gradle spring-jtok project modelling ecommerce portal bounded context
-- **payments**: a gradle spring-jtok project modelling payments system bounded context
+- **ecommerce-mongo**: a gradle spring-jtok project modelling ecommerce portal bounded context on mongodb
+- **payments-mongo**: a gradle spring-jtok project modelling payments system bounded context on mongodb
 - **integration-tests**: a maven project to test the integration between
 the three microservices. It provides java integration tests and IntelliJ Idea 
 http script samples. It also provides docker artifacts:
@@ -134,29 +134,31 @@ curl --location "http://localhost:4000/ecommerce/api/catalogArticles"
 {
   "_embedded" : {
     "catalogArticles" : [ {
+      "version" : null,
       "lastOperationTs" : null,
       "name" : "scarpe-eleganti",
       "description" : "scarpe eleganti",
       "quantity" : 0,
       "_links" : {
         "self" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/1"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160cd09d9801e9cc66f9f"
         },
         "catalogArticle" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/1"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160cd09d9801e9cc66f9f"
         }
       }
     }, {
+      "version" : null,
       "lastOperationTs" : null,
       "name" : "calze-seta",
       "description" : "calze di seta",
       "quantity" : 0,
       "_links" : {
         "self" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/2"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160fcfd076e3466b141c8"
         },
         "catalogArticle" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/2"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160fcfd076e3466b141c8"
         }
       }
     } ]
@@ -201,29 +203,31 @@ curl --location "http://localhost:4000/ecommerce/api/catalogArticles"
 {
   "_embedded" : {
     "catalogArticles" : [ {
+      "version" : null,
       "lastOperationTs" : null,
       "name" : "scarpe-eleganti",
       "description" : "scarpe eleganti",
       "quantity" : 50,
       "_links" : {
         "self" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/1"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160cd09d9801e9cc66f9f"
         },
         "catalogArticle" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/1"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160cd09d9801e9cc66f9f"
         }
       }
     }, {
+      "version" : null,
       "lastOperationTs" : null,
       "name" : "calze-seta",
       "description" : "calze di seta",
       "quantity" : 250,
       "_links" : {
         "self" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/2"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160fcfd076e3466b141c8"
         },
         "catalogArticle" : {
-          "href" : "http://ecommerce:8080/api/catalogArticles/2"
+          "href" : "http://ecommerce:8080/api/catalogArticles/63c160fcfd076e3466b141c8"
         }
       }
     } ]
@@ -257,49 +261,39 @@ curl -X POST --location "http://localhost:4000/ecommerce/api/order" \
         }"
 ```
 ```json
-{"id":3,"globalId":"90c0cb7f-b074-47a1-aa48-5dffeb1b2324","customer":"panks","status":"CREATED","currency":"EUR","granTotal":123.56,"notes":null,"items":[{"id":4,"catalogArticle":{"id":1,"version":1,"lastOperationTs":null,"name":"scarpe-eleganti","description":"scarpe eleganti","quantity":50},"quantity":1},{"id":5,"catalogArticle":{"id":2,"version":1,"lastOperationTs":null,"name":"calze-seta","description":"calze di seta","quantity":250},"quantity":2}]}
+{"id":"63c1616109d9801e9cc66fa0","globalId":"9fe44f3f-e8d6-4382-b764-0eb5ae73c022","customer":"panks","status":"CREATED","currency":"EUR","granTotal":123.56,"notes":null,"items":[{"catalogArticleId":"63c160cd09d9801e9cc66f9f","catalogArticleName":"scarpe-eleganti","quantity":1},{"catalogArticleId":"63c160fcfd076e3466b141c8","catalogArticleName":"calze-seta","quantity":2}]}
 ```
+Get the orderId from the previous response.
+orderId=63c1616109d9801e9cc66fa0
 
-check the order status
+check the order status (using the returned orderId)
 
 ```bash
-curl --location http://localhost:4000/ecommerce/api/orders/3
+curl --location http://localhost:4000/ecommerce/api/orders/{orderId}
 ```
 ```json
 {
-  "globalId" : "90c0cb7f-b074-47a1-aa48-5dffeb1b2324",
+  "globalId" : "9fe44f3f-e8d6-4382-b764-0eb5ae73c022",
   "customer" : "panks",
   "status" : "APPROVED",
   "currency" : "EUR",
   "granTotal" : 123.56,
   "notes" : null,
   "items" : [ {
-    "quantity" : 1,
-    "_links" : {
-      "order" : {
-        "href" : "http://ecommerce:8080/api/orders/3"
-      },
-      "catalogArticle" : {
-        "href" : "http://ecommerce:8080/api/catalogArticles/1"
-      }
-    }
+    "catalogArticleId" : "63c160cd09d9801e9cc66f9f",
+    "catalogArticleName" : "scarpe-eleganti",
+    "quantity" : 1
   }, {
-    "quantity" : 2,
-    "_links" : {
-      "order" : {
-        "href" : "http://ecommerce:8080/api/orders/3"
-      },
-      "catalogArticle" : {
-        "href" : "http://ecommerce:8080/api/catalogArticles/2"
-      }
-    }
+    "catalogArticleId" : "63c160fcfd076e3466b141c8",
+    "catalogArticleName" : "calze-seta",
+    "quantity" : 2
   } ],
   "_links" : {
     "self" : {
-      "href" : "http://ecommerce:8080/api/orders/3"
+      "href" : "http://ecommerce:8080/api/orders/63c1616109d9801e9cc66fa0"
     },
     "order" : {
-      "href" : "http://ecommerce:8080/api/orders/3"
+      "href" : "http://ecommerce:8080/api/orders/63c1616109d9801e9cc66fa0"
     }
   }
 }
@@ -406,50 +400,38 @@ curl --location http://localhost:4000/depot/api/articles
 proceed to pay the order
 
 ```bash
-curl -X PATCH --location "http://localhost:4000/ecommerce/api/order/3/checkout"
+curl -X PATCH --location "http://localhost:4000/ecommerce/api/order/{orderId}/checkout"
 ```
 
 check the order status to PAYED
 
 ```bash
-curl --location http://localhost:4000/ecommerce/api/orders/3
+curl --location http://localhost:4000/ecommerce/api/orders/{orderId}
 ```
 
 ```json
 {
-  "globalId" : "90c0cb7f-b074-47a1-aa48-5dffeb1b2324",
+  "globalId" : "9fe44f3f-e8d6-4382-b764-0eb5ae73c022",
   "customer" : "panks",
   "status" : "PAYED",
   "currency" : "EUR",
   "granTotal" : 123.56,
   "notes" : null,
   "items" : [ {
-    "quantity" : 1,
-    "_links" : {
-      "order" : {
-        "href" : "http://ecommerce:8080/api/orders/3"
-      },
-      "catalogArticle" : {
-        "href" : "http://ecommerce:8080/api/catalogArticles/1"
-      }
-    }
+    "catalogArticleId" : "63c160cd09d9801e9cc66f9f",
+    "catalogArticleName" : "scarpe-eleganti",
+    "quantity" : 1
   }, {
-    "quantity" : 2,
-    "_links" : {
-      "order" : {
-        "href" : "http://ecommerce:8080/api/orders/3"
-      },
-      "catalogArticle" : {
-        "href" : "http://ecommerce:8080/api/catalogArticles/2"
-      }
-    }
+    "catalogArticleId" : "63c160fcfd076e3466b141c8",
+    "catalogArticleName" : "calze-seta",
+    "quantity" : 2
   } ],
   "_links" : {
     "self" : {
-      "href" : "http://ecommerce:8080/api/orders/3"
+      "href" : "http://ecommerce:8080/api/orders/63c1616109d9801e9cc66fa0"
     },
     "order" : {
-      "href" : "http://ecommerce:8080/api/orders/3"
+      "href" : "http://ecommerce:8080/api/orders/63c1616109d9801e9cc66fa0"
     }
   }
 }
@@ -463,30 +445,29 @@ curl --location http://localhost:4000/payments/api/accounts/panks/balance
 
 ```json
 {
-  "id": 1,
-  "version": 2,
-  "userId": "panks",
-  "lastOperationTs": 1647601849224,
-  "notes": "Panks account",
-  "operations": [
-    {
-      "id": 2,
-      "version": 0,
-      "amount": 250,
-      "timestamp": 1647601840413,
-      "refId": "aea464f7-c412-494c-ba3b-eeab62771978",
-      "refKey": "api"
-    },
-    {
-      "id": 3,
-      "version": 0,
-      "amount": -123.56,
-      "timestamp": 1647601849224,
-      "refId": "81e8272f-fe2c-46c5-b59c-7cbe99ed7ba5",
-      "refKey": "90c0cb7f-b074-47a1-aa48-5dffeb1b2324"
-    }
-  ],
-  "balance": 126.44
+    "id": "63c160b88160e45f96462461",
+    "version": null,
+    "userId": "panks",
+    "lastOperationTs": 1673617979043,
+    "notes": "Panks account",
+    "operations":
+    [
+        {
+            "version": null,
+            "amount": 250.00,
+            "timestamp": 1673617601240,
+            "refId": "ab2c8a2c-226e-471a-a913-d377ae672159",
+            "refKey": "api"
+        },
+        {
+            "version": null,
+            "amount": -123.5600000000000022737367544323205947875976562500,
+            "timestamp": 1673617979043,
+            "refId": "a2e65baf-b3e4-40f5-ab12-26b3fa2c7fdc",
+            "refKey": "9fe44f3f-e8d6-4382-b764-0eb5ae73c022"
+        }
+    ],
+    "balance": 126.43
 }
 ```
 Nice job! You have completed some eventually consistent distributed sagas among the deployed microservices     
