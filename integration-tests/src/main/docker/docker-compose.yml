@@ -57,6 +57,20 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: pass
     ports:
       - 127.0.0.1:28018:27017
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+#    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    networks:
+      - app-tier
+#    healthcheck:
+#      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo -u root -p pass --quiet) -eq 1
+#      interval: 200s
+#      start_period: 30s
+  mongosetup:
+    image: mongo:4.0.28
+    depends_on:
+      - mongo
+    restart: "no"
+    entrypoint: [ "bash", "-c", "sleep 10 && mongo -u root -p pass --host mongo:27017 --eval 'rs.initiate()'" ]
     networks:
       - app-tier
   depot:
@@ -94,6 +108,7 @@ services:
 #      - 127.0.0.1:8082:8080
     depends_on:
       - mongo
+      - mongosetup
       - kafka
     expose:
       - "8080"
@@ -116,6 +131,7 @@ services:
       - "8080"
     depends_on:
       - mongo
+      - mongosetup
       - kafka
     networks:
       - app-tier

@@ -7,9 +7,11 @@ import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 @Service
@@ -19,10 +21,20 @@ public class CatalogArticleService {
 
     private final CatalogArticleRepository catalogArticleRepository;
     private final CatalogUpdateRepository catalogUpdateRepository;
+    private MongoTemplate mongoTemplate;
 
-    public CatalogArticleService(CatalogArticleRepository catalogArticleRepository, CatalogUpdateRepository catalogUpdateRepository) {
+    public CatalogArticleService(CatalogArticleRepository catalogArticleRepository,
+                                 CatalogUpdateRepository catalogUpdateRepository,
+                                 MongoTemplate mongoTemplate) {
         this.catalogArticleRepository = catalogArticleRepository;
         this.catalogUpdateRepository = catalogUpdateRepository;
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @PostConstruct
+    private void initCollections() {
+        mongoTemplate.createCollection(CatalogArticle.class);
+        mongoTemplate.createCollection(CatalogUpdate.class);
     }
 
     @Transactional

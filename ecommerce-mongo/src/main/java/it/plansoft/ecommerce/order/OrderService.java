@@ -6,9 +6,11 @@ import it.plansoft.ecommerce.catalogarticle.CatalogArticleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +24,17 @@ public class OrderService {
 
     private final OrderRepository repository;
     private final CatalogArticleRepository catalogArticleRepository;
+    private final MongoTemplate mongoTemplate;
 
-    public OrderService(OrderRepository repository, CatalogArticleRepository catalogArticleRepository) {
+    public OrderService(OrderRepository repository, CatalogArticleRepository catalogArticleRepository, MongoTemplate mongoTemplate) {
         this.repository = repository;
         this.catalogArticleRepository = catalogArticleRepository;
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @PostConstruct
+    private void initCollections() {
+        mongoTemplate.createCollection(Order.class);
     }
 
     private List<OrderItem> mapItems(Order order, List<OrderItemValue> values) {
