@@ -31,41 +31,56 @@ http script samples. It also provides docker artifacts:
 You can run all the system locally using [docker-compose](https://docs.docker.com/compose/install/)
 (active experimental DOCKER_BUILDKIT to build microservices images)
 ```bash
-export DOCKER_BUILDKIT=1
 cd integration-tests/src/main/docker
-docker-compose up -d
+./start_compose.sh
 
-Starting docker_zookeeper_1 ... done
-Starting docker_postgres_1  ... done
-Starting docker_kafka_1     ... done
-Starting docker_ecommerce_1 ... done
-Starting docker_payments_1  ... done
-Starting docker_kafdrop_1   ... done
-Starting docker_depot_1     ... done
-Starting docker_gateway_1   ... done
+[+] Running 11/11
+ ⠿ Network docker_app-tier        Created                                                                                                              0.8s
+ ⠿ Container docker-mongo-1       Started                                                                                                              2.6s
+ ⠿ Container docker-postgres-1    Started                                                                                                              3.3s
+ ⠿ Container docker-zookeeper-1   Started                                                                                                              2.3s
+ ⠿ Container docker-kafka-1       Started                                                                                                              4.3s
+ ⠿ Container docker-mongosetup-1  Started                                                                                                              4.0s
+ ⠿ Container docker-depot-1       Started                                                                                                              7.6s
+ ⠿ Container docker-kafdrop-1     Started                                                                                                              7.8s
+ ⠿ Container docker-payments-1    Started                                                                                                              6.3s
+ ⠿ Container docker-ecommerce-1   Started                                                                                                              7.8s
+ ⠿ Container docker-gateway-1     Started                                                                                                              9.5s
 ```
 You can scale microservice instances
 ```bash
 docker-compose up -d --no-recreate --scale depot=3 --scale ecommerce=2
 
-Creating docker_ecommerce_2 ... done
-Creating docker_depot_2     ... done
-Creating docker_depot_3     ... done
+[+] Running 13/13
+ ⠿ Container docker-zookeeper-1   Running                                                                                                              0.0s
+ ⠿ Container docker-kafka-1       Running                                                                                                              0.0s
+ ⠿ Container docker-kafdrop-1     Running                                                                                                              0.0s
+ ⠿ Container docker-postgres-1    Running                                                                                                              0.0s
+ ⠿ Container docker-mongo-1       Running                                                                                                              0.0s
+ ⠿ Container docker-mongosetup-1  Started                                                                                                              3.1s
+ ⠿ Container docker-depot-1       Running                                                                                                              0.0s
+ ⠿ Container docker-depot-3       Started                                                                                                              2.9s
+ ⠿ Container docker-payments-1    Running                                                                                                              0.0s
+ ⠿ Container docker-ecommerce-1   Running                                                                                                              0.0s
+ ⠿ Container docker-ecommerce-2   Started                                                                                                              4.5s
+ ⠿ Container docker-depot-2       Started                                                                                                              3.2s
+ ⠿ Container docker-gateway-1     Running                                                                                                              0.0s
 
 docker-compose ps
-       Name                     Command               State                                   Ports                                 
-------------------------------------------------------------------------------------------------------------------------------------
-docker_depot_1       sh -c exec java -cp app:ap ...   Up      8080/tcp                                                              
-docker_depot_2       sh -c exec java -cp app:ap ...   Up      8080/tcp                                                              
-docker_depot_3       sh -c exec java -cp app:ap ...   Up      8080/tcp                                                              
-docker_ecommerce_1   sh -c exec java -cp app:ap ...   Up      8080/tcp                                                              
-docker_ecommerce_2   sh -c exec java -cp app:ap ...   Up      8080/tcp                                                              
-docker_gateway_1     /docker-entrypoint.sh ngin ...   Up      0.0.0.0:4000->4000/tcp,:::4000->4000/tcp, 80/tcp                      
-docker_kafdrop_1     /kafdrop.sh                      Up      0.0.0.0:9999->9000/tcp,:::9999->9000/tcp                              
-docker_kafka_1       /opt/bitnami/scripts/kafka ...   Up      0.0.0.0:29092->29092/tcp,:::29092->29092/tcp, 9092/tcp                
-docker_payments_1    sh -c exec java -cp app:ap ...   Up      8080/tcp                                                              
-docker_postgres_1    docker-entrypoint.sh postgres    Up      127.0.0.1:5432->5432/tcp                                              
-docker_zookeeper_1   /opt/bitnami/scripts/zooke ...   Up      0.0.0.0:2181->2181/tcp,:::2181->2181/tcp, 2888/tcp, 3888/tcp, 8080/tcp
+NAME                  COMMAND                  SERVICE             STATUS              PORTS
+docker-depot-1        "sh -c 'exec java -c…"   depot               running             8080/tcp
+docker-depot-2        "sh -c 'exec java -c…"   depot               running             8080/tcp
+docker-depot-3        "sh -c 'exec java -c…"   depot               running             8080/tcp
+docker-ecommerce-1    "sh -c 'exec java -c…"   ecommerce           running             8080/tcp
+docker-ecommerce-2    "sh -c 'exec java -c…"   ecommerce           running             8080/tcp
+docker-gateway-1      "/docker-entrypoint.…"   gateway             running             0.0.0.0:4000->4000/tcp, :::4000->4000/tcp
+docker-kafdrop-1      "/kafdrop.sh"            kafdrop             running             0.0.0.0:9999->9000/tcp, :::9999->9000/tcp
+docker-kafka-1        "/opt/bitnami/script…"   kafka               running             0.0.0.0:29092->29092/tcp, :::29092->29092/tcp
+docker-mongo-1        "docker-entrypoint.s…"   mongo               running             127.0.0.1:28018->27017/tcp
+docker-mongosetup-1   "bash -c 'sleep 10 &…"   mongosetup          exited (0)
+docker-payments-1     "sh -c 'exec java -c…"   payments            running             8080/tcp
+docker-postgres-1     "docker-entrypoint.s…"   postgres            running             127.0.0.1:5432->5432/tcp
+docker-zookeeper-1    "/opt/bitnami/script…"   zookeeper           running             0.0.0.0:2181->2181/tcp, :::2181->2181/tcp
 
 ```
 You can test the microservice endpoints and asynchronous domain events propagation using
